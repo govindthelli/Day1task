@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/govindthelli/Task-1.git'
-            }
-        }
 
         stage('Unzip Projects') {
             steps {
