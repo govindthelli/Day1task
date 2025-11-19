@@ -3,44 +3,51 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                // your git clone code here
+                git branch: 'master',
+                    url: 'https://github.com/govindthelli/Task-1.git'
             }
         }
 
-        stage('Check Required Tools') {
+        stage('Unzip Projects') {
             steps {
-                // check docker version
-                // check unzip version
+                sh 'rm -rf flask-app node-app html'
+                sh 'unzip flask-app.zip -d flask-app'
+                sh 'unzip node-app.zip -d node-app'
+                sh 'mkdir -p html'
+                sh 'cp index.html html/'
             }
         }
 
-        stage('Unzip Source Code') {
+        stage('Build Flask Image') {
             steps {
-                // unzip your code here
+                dir('flask-app') {
+                    sh 'docker build -t flask-app-image .'
+                }
             }
         }
 
-        stage('Navigate & List Files') {
+        stage('Build Node Image') {
             steps {
-                // cd into main folder
-                // list files
+                dir('node-app') {
+                    sh 'docker build -t node-app-image .'
+                }
             }
         }
 
-        stage('Docker Build Image') {
+        stage('Run All Containers') {
             steps {
-                // docker build code here
+                sh """
+                    docker rm -f flask-container || true
+                    docker rm -f node-container || true
+                    docker rm -f html-server || true
+
+                    docker run -d --name flask-container -p 5000:5000 flask-app-image
+                    docker run -d --name node-container -p 3000:3000 node-app-image
+                    docker run -d --name html-server -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+                """
             }
         }
-
-        stage('Docker Run Container') {
-            steps {
-                // remove existing container
-                // run new container
-            }
-        }
-
     }
 }
