@@ -15,34 +15,32 @@ pipeline {
 
         stage('Build Flask Image') {
             steps {
-                dir('flask-app/flask-app') {
+                
                     sh '''
-                        docker build -t flask-app-image .
+                        docker build -t flask-app-image ./flask-app/flask-app
                     '''
-                }
+                
             }
         }
 
         stage('Build Node Image') {
             steps {
-                dir('node-app/node-app') {
+               
                     sh '''
-                        docker build -t node-app-image .
+                        docker build -t node-app-image ./node-app/node-app
                     '''
-                }
+                
             }
         }
 
         stage('Run All Containers') {
             steps {
                 sh '''
-                    docker rm -f flask-container || true
-                    docker rm -f node-container || true
-                    docker rm -f html-server || true
+                    docker rm -f ${docker ps -aq} || true
 
                     docker run -d --name flask-container -p 5000:5000 flask-app-image
                     docker run -d --name node-container -p 3000:3000 node-app-image
-                    docker run -d --name html-server -p 8085:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+                    docker run -d --name html-server -p 8085:80 -v ./html:/usr/share/nginx/html nginx
                 '''
             }
         }
