@@ -17,7 +17,6 @@ pipeline {
             steps {
                 dir('flask-app/flask-app') {
                     sh '''
-                        export DOCKER_BUILDKIT=1
                         docker build -t flask-app-image .
                     '''
                 }
@@ -28,7 +27,6 @@ pipeline {
             steps {
                 dir('node-app/node-app') {
                     sh '''
-                        export DOCKER_BUILDKIT=1
                         docker build -t node-app-image .
                     '''
                 }
