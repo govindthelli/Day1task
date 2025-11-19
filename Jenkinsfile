@@ -3,7 +3,6 @@ pipeline {
 
     stages {
 
-
         stage('Unzip Projects') {
             steps {
                 sh 'rm -rf flask-app node-app html'
@@ -16,16 +15,22 @@ pipeline {
 
         stage('Build Flask Image') {
             steps {
-                dir('flask-app') {
-                    sh 'docker build -t flask-app-image .'
+                dir('flask-app/flask-app') {
+                    sh '''
+                        export DOCKER_BUILDKIT=1
+                        docker build -t flask-app-image .
+                    '''
                 }
             }
         }
 
         stage('Build Node Image') {
             steps {
-                dir('node-app') {
-                    sh 'docker build -t node-app-image .'
+                dir('node-app/node-app') {
+                    sh '''
+                        export DOCKER_BUILDKIT=1
+                        docker build -t node-app-image .
+                    '''
                 }
             }
         }
