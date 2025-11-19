@@ -32,7 +32,7 @@ pipeline {
 
         stage('Run All Containers') {
             steps {
-                sh """
+                sh '''
                     docker rm -f flask-container || true
                     docker rm -f node-container || true
                     docker rm -f html-server || true
@@ -40,7 +40,7 @@ pipeline {
                     docker run -d --name flask-container -p 5000:5000 flask-app-image
                     docker run -d --name node-container -p 3000:3000 node-app-image
                     docker run -d --name html-server -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
-                """
+                '''
             }
         }
     }
